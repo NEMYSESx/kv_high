@@ -1,0 +1,11 @@
+So the whole working of logs is something like this , a file name is choosen lets say app.log Now this app.log is either created or opened if 
+already exist if a write request comes in, Before writing, it checks if rotation is needed based on the space left in the file as the file 
+cannot exceed 32KB , If the roation is needed then the current file get renamed and moved to some other location on the disk, then a new
+file is created with the same name that is app.log and the write happen in the new app.log file.
+
+//header of the file
+So the header of the file has 3 things crc which is 4 bytes, length of the data which is 2 bytes as each file is only 32kb so its length will 
+never exceed more than 2 bytes. and 1 byte for block type.
+
+//
+

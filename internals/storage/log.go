@@ -19,15 +19,3 @@ var record = &RecordType{
 const recordSize = 32768
 
 const recordHeaderSize = 4 + 2 + 1
-
-type Header struct {
-	CRC       uint32
-	length    uint16
-	BlockType byte
-}
-
-type HeaderBuilder struct{}
-
-func NewHeaderBuilder() *HeaderBuilder {
-	return &HeaderBuilder{}
-}
