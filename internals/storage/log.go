@@ -1,38 +1,33 @@
-package main
+package storage
 
-import (
-	"fmt"
-	"hash/crc32"
-	"os"
-)
-
-type Record struct {
-	CRC       uint32
-	Timestamp uint32  
-	KeySize   uint32
-	ValueSize uint32
-	Key       string
-	Value     string
+type RecordType struct {
+	ZeroType   int
+	FullType   int
+	FirstType  int
+	MiddleType int
+	LastType   int
 }
 
-func main() {
-	file, err := os.OpenFile("append.log", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
-	if err != nil {
-		fmt.Println("Error opening the file:", err)
-		return
-	}
-	defer file.Close()
+var record = &RecordType{
+	ZeroType:   0,
+	FullType:   1,
+	FirstType:  2,
+	MiddleType: 3,
+	LastType:   4,
+}
 
-	_, err = file.WriteString("New log entry\n")
-	if err != nil {
-		fmt.Println("Error writing to the file:", err)
-		return
-	}
-	fmt.Println("File written successfully!")
+const recordSize = 32768
 
-	data := []byte("Hello world!")
-	fmt.Println("Data:", string(data))
+const recordHeaderSize = 4 + 2 + 1
 
-	checkSum := crc32.ChecksumIEEE(data)
-	fmt.Printf("CRC-32 (IEEE): %08x\n", checkSum)
+type Header struct {
+	CRC       uint32
+	length    uint16
+	BlockType byte
+}
+
+type HeaderBuilder struct{}
+
+func NewHeaderBuilder() *HeaderBuilder {
+	return &HeaderBuilder{}
 }

@@ -6,6 +6,25 @@ import (
 
 const MaxPoolSize = 4
 
+// pages is an array of pointers to Page.
+// Each slot in the array corresponds to a frame in memory.
+// To access a page, we need a frameID (which is just an index in this array).
+
+// This pageTable is a map (hash table) that stores PageID → FrameID mappings.
+// Key: PageID (the ID of a page requested by the user).
+// Value: FrameID (the slot in the pages array where that page is stored).
+
+// What is frameID?
+// frameID is just an index in the pages array.
+// It represents a physical slot in the buffer pool where a Page is stored.
+// It is not tied to any specific page permanently. A frameID can hold different pages over time.
+
+// Why do we need frameID instead of directly mapping pageID to pages?
+// pages is a fixed-size array (e.g., MaxPoolSize = 4).
+// The database can have thousands or millions of pages (PageIDs).
+// We cannot create an array with millions of slots just for PageIDs because it would be inefficient.
+// 👉 Instead, we use frameID to manage a limited number of slots dynamically.
+
 type BufferPoolManager struct {
 	diskManager DiskManager
 	pages       [MaxPoolSize]*Page
@@ -22,11 +41,15 @@ func (b *BufferPoolManager) FetchPage(pageID PageID) *Page {
 		return page
 	}
 
+	//Page is Not in Memory (Cache Miss) – Find a Free Frame
+
 	frameID, isFromFreeList := b.getFrameID()
 	if frameID == nil {
 		return nil
 	}
 
+
+//if there arent any space in the frame so flush the page to the disk and then delete it from the frame to make space.
 	if !isFromFreeList {
 		currentPage := b.pages[*frameID]
 		if currentPage != nil {

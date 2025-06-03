@@ -61,6 +61,8 @@ func (c *circularList) insert(key interface{}, value interface{}) error {
 	newNode.prev = c.tail
 
 	c.tail.next = newNode
+
+	//case when there is only one node
 	if c.head == c.tail {
 		c.head.next = newNode
 	}
