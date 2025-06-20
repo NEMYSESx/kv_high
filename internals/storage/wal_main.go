@@ -12,10 +12,10 @@ func writeToWal() error {
 		
 	}
 
-	return ,nil
+	return nil
 
 }
 
 func checkingSpace(): bool {
-	
+	return false
 }
